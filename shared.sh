@@ -180,6 +180,25 @@ EOF
   doneSection
 }
 
+postProcessFramework() {
+  pushd framework/secp256k1.framework
+  rm Documentation
+  rm Headers
+  rm Resources
+  rm secp256k1
+  cd Versions
+  rm Current
+  mv A Current
+  rm Current/A
+  rm Current/Documentation/Documentation
+  rm Current/Headers/Headers
+  rm Current/Resources/Resources
+  cd ..
+  mv Versions/Current/secp256k1 .
+  popd
+  doneSection
+}
+
 unzipBundle() {
   echo "Unzip bundle to $SRC_DIR..."
   unzip $BUNDLE -d $SRC_DIR
@@ -195,7 +214,7 @@ untarGzippedBundle() {
 downloadSrc() {
   echo "Download source if needed..."
   if [ ! -e "$WORKING_DIR/$BUNDLE" ]; then
-    wget $DOWNLOAD_URL -O $WORKING_DIR/$BUNDLE
+    git clone $GIT_URL
   fi
   doneSection
 }
@@ -203,7 +222,7 @@ downloadSrc() {
 gitCloneSrc() {
   echo "CLong repo bitcoin-core/secp256k1"
   if [ ! -e "$WORKING_DIR/secp256k1" ]; then
-    git clone git://github.com/bitcoin-core/secp256k1.git
+    git clone $GIT_URL
   fi
   if [ ! -e "$SRC_DIR/$FRAMEWORK_NAME-$FRAMEWORK_CURRENT_VERSION/autogen.sh" ]; then
     cp -rv secp256k1/* $SRC_DIR/$FRAMEWORK_NAME-$FRAMEWORK_CURRENT_VERSION/

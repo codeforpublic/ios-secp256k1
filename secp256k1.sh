@@ -3,7 +3,7 @@
 # Bundle config
 : ${BUNDLE:=}
 : ${DOWNLOAD_URL:=}
-: ${GIT_URL:="git://github.com/bitcoin-core/secp256k1.git"}
+: ${GIT_URL:="https://github.com/bitcoin-core/secp256k1.git"}
 : ${LIBRARY:=libsecp256k1.a}
 
 # framework config
@@ -33,11 +33,7 @@ exportConfig() {
     IOS_SYSROOT=$XCODE_DEVICE_SDK
   fi
   CFLAGS="-arch $IOS_ARCH -fPIC -g -Os -pipe --sysroot=$IOS_SYSROOT"
-  if [ "$IOS_ARCH" == "armv7s" ] || [ "$IOS_ARCH" == "armv7" ]; then
-    CFLAGS="$CFLAGS -mios-version-min=6.0"
-  else
-    CFLAGS="$CFLAGS -fembed-bitcode -mios-version-min=7.0"
-  fi
+  CFLAGS="$CFLAGS -fembed-bitcode -mios-version-min=7.0"
   CXXFLAGS=$CFLAGS
   CPPFLAGS=$CFLAGS
   CC_FOR_BUILD=/usr/bin/clang
@@ -104,13 +100,14 @@ developerToolsPresent
 if [ "$ENV_ERROR" == "0" ]; then
   cleanUp
   createDirs
-  # downloadSrc
+ # downloadSrc
  # untarLzippedBundle
  # gitCloneSrc
   compileSrcForAllArchs
   buildUniversalLib
   moveHeadersToFramework
   buildFrameworkPlist
+  postProcessFramework
   echo "Completed successfully.."
 else
   echo "Build failed..."
